@@ -1,6 +1,6 @@
 ## Instalação e Configuração do PostgreSQL
 
-Aqui será descrito como faço para instalar o PostreSQL a partir do código fonte, ou seja, compilado. Não irei abordar a instalação por pacotes do repositório, porque prefiro ter total controle sobre a instalação.
+Aqui será descrito como faço para instalar o PostgreSQL a partir do código fonte, ou seja, compilado. Não irei abordar a instalação por pacotes do repositório, porque prefiro ter total controle sobre a instalação.
 
 É fato que a instalação de forma compilada dificulta um pouco a parte de automação do ambiente, mas irei mostrar mais na frente que é possível e não muito complicado, mas é preciso entender bem os passos abaixo.
 
@@ -41,8 +41,8 @@ O ```make``` irá de fato compilar o código fonte.
 ```bash
 make
 ```
->> Esse passo pode demorar bastante, pois por padrão o make utilizará apenas um core de processamente. Para passar mais CPUs para o make utilize a flag ```-j``` com a quantidade deseja. Exemplo: ```make -j 2```.
->> Para saber quantos cores de processamente o seu servidore possui, basta executar o comando ```nproc```.
+> Esse passo pode demorar bastante, pois por padrão o make utilizará apenas um core de processamento. Para passar mais CPUs ao make utilize a flag ```-j``` com a quantidade deseja. Exemplo: ```make -j 2```.
+> Para saber quantos cores de processamente o seu servidor possui, basta executar o comando ```nproc```.
 
 E o ```make install``` irá instalar o resultado do make, ou seja, criar os subdiretórios e copiar os arquivos para os seus respectivos lugares.
 ```bash
@@ -77,7 +77,7 @@ Para validar, execute ```psql --version```.
 ```
 psql (PostgreSQL) 12.4
 ```
->> Nos casos onde você precisa ter mais de uma versão do PostgreSQL instalada, não recomendo executar esse passo, melhor executar os binários passando o PATH absoluto, porque dessa forma evita confusões relacionadas a versão.
+> Nos casos onde você precisa ter mais de uma versão do PostgreSQL instalada, não recomendo executar esse passo, melhor executar os binários passando o PATH absoluto, porque dessa forma evita confusões relacionadas a versão.
 
 Nesse tópico consultei a documentação oficial do postgres, no tópico [16.5.1. Shared Libraries](https://www.postgresql.org/docs/12/install-post.html#id-1.6.3.9.2).
 
