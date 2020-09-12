@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 servers = {
-  'primario' => { 'ip' => '10.10.10.10', 'memory' => '2048', 'cpus' => '2', 'disk' => '/tmp/primario_disk.vdi' },
+  'primary' => { 'ip' => '10.10.10.10', 'memory' => '2048', 'cpus' => '2', 'disk' => '/tmp/primary_disk.vdi' },
 }
 
 Vagrant.configure("2") do |config|
