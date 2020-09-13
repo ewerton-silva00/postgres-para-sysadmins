@@ -32,6 +32,13 @@ Vagrant.configure("2") do |config|
           setenforce 0
           firewall-cmd --permanent --add-port=5432/tcp
           firewall-cmd --reload
+          # --- BEGIN Second Disk Configuration
+          parted /dev/sdb mklabel gpt --script
+          parted /dev/sdb mkpart primary xfs 0% 100% --script
+          mkfs -t xfs /dev/sdb1 &> /dev/null
+          mkdir /data
+          mount -t xfs /dev/sdb1 /data
+          # --- END Second Disk Configuartion
           hostnamectl
         SHELL
       end
