@@ -97,3 +97,33 @@ useradd --user-group --no-create-home --shell /bin/bash postgres
 ```
 
 Nesse tópico consultei a documentação oficial do postgres, no tópico [18.1. The PostgreSQL User Account](https://www.postgresql.org/docs/12/postgres-user.html).
+
+**05. Inicializando o cluster de banco de dados.**
+
+No PostgreSQL o conceito de ```cluster``` define uma coleção de banco de dados gerenciado por uma única instância de um servidor.
+
+Seguindo uma boa prática, aqui irei inicializar o cluster numa partição secundária, provisionada exclusivamente para receber os dados do postgres.
+
+Outra boa prática a seguir é não inicializar o cluster diretamente no ponto de montagem, mas criar um subdiretório, ou seja, não inicializar o cluster diretamente no ```/data```, mas no ```/data/pgdata```.
+
+Essa prática evita problemas com permissões e protege os dados contra possíveis falhas no ponto de montagem.
+
+O ```Vagrantfile``` disponível na raíz deste repositório provisiona automaticamente um segundo disco e o monta no ```/data```. Ficou fácil, você precisa agora criar o subdiretório chamado ```pgdata```.
+```bash
+mkdir -p /data/pgdta
+```
+
+Mude o dono do diretório para o usuário ```postgres```.
+```bash
+chown postgres:postgres /data/pgdata
+```
+
+Ajuste a permissão para ```700```.
+```bash
+chmod 700 /data/pgdata
+```
+
+Agora inicialize o cluster com o comando abaixo.
+```bash
+su --command "/usr/local/pgsql/12.4/bin/initdb --encoding UTF-8 --locale pt_BR.UTF-8 --pgdata /data/pgdata" --shell /bin/bash postgres
+```
