@@ -44,10 +44,12 @@ make
 > Esse passo pode demorar bastante, pois por padrão o make utilizará apenas um core de processamento. Para passar mais CPUs ao make utilize a flag ```-j``` com a quantidade deseja. Exemplo: ```make -j 2```.
 > Para saber quantos cores de processamente o seu servidor possui, basta executar o comando ```nproc```.
 
-E o ```make install``` irá instalar o resultado do make, ou seja, criar os subdiretórios e copiar os arquivos para os seus respectivos lugares.
+O ```make install``` irá instalar o resultado do make, ou seja, criar os subdiretórios e copiar os arquivos para os seus respectivos lugares.
 ```bash
 make install
 ```
+
+E o ```make install-docs``` apenas instala a documentação, permitindo, por exemplo, o uso do ```man psql``` e estudar pelo terminal mesmo. É um passo opcional.
 
 Nesse tópico consultei a documentação oficial do postgres, no tópico [16.4. Installation Procedure](https://www.postgresql.org/docs/12/install-procedure.html).
 
@@ -61,6 +63,9 @@ Crie o arquivo ```/etc/profile.d/postgres.sh``` e insira o conteúdo abaixo.
 ```
 PATH="$PATH:/usr/local/pgsql/12.4/bin"
 export PATH
+
+MANPATH="/usr/local/pgsql/12.4/share/man"
+export MANPATH
 ```
 
 Para inicializar a variável imediatamente sem precisar reiniciar a sessão no bash execute:
