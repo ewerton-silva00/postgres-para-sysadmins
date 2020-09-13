@@ -118,12 +118,72 @@ Mude o dono do diretório para o usuário ```postgres```.
 chown postgres:postgres /data/pgdata
 ```
 
-Ajuste a permissão para ```700```.
+Ajuste a permissão para ```0700```.
 ```bash
-chmod 700 /data/pgdata
+chmod 0700 /data/pgdata
 ```
 
 Agora inicialize o cluster com o comando abaixo.
 ```bash
 su --command "/usr/local/pgsql/12.4/bin/initdb --encoding UTF-8 --locale pt_BR.UTF-8 --pgdata /data/pgdata" --shell /bin/bash postgres
 ```
+
+O resultado será semelhante ao mostrado abaixo.
+```
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "pt_BR.UTF-8".
+The default text search configuration will be set to "portuguese".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /data/pgdata ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... America/Recife
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+initdb: warning: enabling "trust" authentication for local connections
+You can change this by editing pg_hba.conf or using the option -A, or
+--auth-local and --auth-host, the next time you run initdb.
+
+Success. You can now start the database server using:
+
+    /usr/local/pgsql/12.4/bin/pg_ctl -D /data/pgdata -l logfile start
+```
+
+Listando a estrutura de diretórios criada temos o seguinte:
+```
+[root@primary ~]# ls -l /data/pgdata
+total 52
+drwx------. 5 postgres postgres    41 Sep 12 23:03 base
+drwx------. 2 postgres postgres  4096 Sep 12 23:03 global
+drwx------. 2 postgres postgres     6 Sep 12 23:02 pg_commit_ts
+drwx------. 2 postgres postgres     6 Sep 12 23:02 pg_dynshmem
+-rw-------. 1 postgres postgres  4760 Sep 12 23:02 pg_hba.conf
+-rw-------. 1 postgres postgres  1636 Sep 12 23:02 pg_ident.conf
+drwx------. 4 postgres postgres    68 Sep 12 23:03 pg_logical
+drwx------. 4 postgres postgres    36 Sep 12 23:02 pg_multixact
+drwx------. 2 postgres postgres    18 Sep 12 23:02 pg_notify
+drwx------. 2 postgres postgres     6 Sep 12 23:02 pg_replslot
+drwx------. 2 postgres postgres     6 Sep 12 23:02 pg_serial
+drwx------. 2 postgres postgres     6 Sep 12 23:02 pg_snapshots
+drwx------. 2 postgres postgres     6 Sep 12 23:02 pg_stat
+drwx------. 2 postgres postgres     6 Sep 12 23:02 pg_stat_tmp
+drwx------. 2 postgres postgres    18 Sep 12 23:02 pg_subtrans
+drwx------. 2 postgres postgres     6 Sep 12 23:02 pg_tblspc
+drwx------. 2 postgres postgres     6 Sep 12 23:02 pg_twophase
+-rw-------. 1 postgres postgres     3 Sep 12 23:02 PG_VERSION
+drwx------. 3 postgres postgres    60 Sep 12 23:02 pg_wal
+drwx------. 2 postgres postgres    18 Sep 12 23:02 pg_xact
+-rw-------. 1 postgres postgres    88 Sep 12 23:02 postgresql.auto.conf
+-rw-------. 1 postgres postgres 26640 Sep 12 23:02 postgresql.conf
+```
+
+Nesse tópico consultei a documentação oficial do postgres, no tópico [18.2. Creating a Database Cluster](https://www.postgresql.org/docs/12/creating-cluster.html).
