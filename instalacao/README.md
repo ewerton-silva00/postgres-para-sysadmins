@@ -50,6 +50,9 @@ make install
 ```
 
 E o ```make install-docs``` apenas instala a documentação, permitindo, por exemplo, o uso do ```man psql``` e estudar pelo terminal mesmo. É um passo opcional.
+```bash
+make install-docs
+```
 
 Nesse tópico consultei a documentação oficial do postgres, no tópico [16.4. Installation Procedure](https://www.postgresql.org/docs/12/install-procedure.html).
 
