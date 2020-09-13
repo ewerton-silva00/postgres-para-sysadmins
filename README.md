@@ -32,3 +32,8 @@ O ```Vagrantfile``` deste repositório utiliza o [Virtualbox](https://www.virtua
 ```vagrant-hosts``` para configurar o ```/etc/hosts``` das VMs automaticamente, pois dessa forma elas poderão se conversar pelo nome sem precisar de muitos ajustes.
 
 Os dois plugins acima são recursos opcionais. Caso não queira utilizar basta remover do Vagrantfile. A box também pode ser alterada para outra de sua escolha, contanto que você faça os ajustes necessários no Vagrantfile.
+
+
+**Conteúdo**:
+
+1. [Instalação do PostgreSQL](instalacao/README.md)
