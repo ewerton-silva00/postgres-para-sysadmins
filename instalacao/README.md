@@ -196,11 +196,19 @@ Em sistemas operacionais com [**systemd**](https://www.freedesktop.org/wiki/Soft
 [Unit]
 Description=PostgreSQL Database Server
 Documentation=man:postgres(1)
+After=network.target
 
 [Service]
 Type=notify
+
 User=postgres
-ExecStart=/usr/local/pgsql/13.0/bin/postgres -D /data/pgdata
+Group=postgres
+
+Environment=PG_OOM_ADJUST_FILE=/proc/self/oom_score_adj
+Environment=PG_OOM_ADJUST_VALUE=0
+Environment=PGDATA=/data/pgdata
+
+ExecStart=/usr/local/pgsql/13.0/bin/postgres -D $PGDATA
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=mixed
 KillSignal=SIGINT
