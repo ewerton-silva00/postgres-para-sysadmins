@@ -19,22 +19,22 @@ Consultei também a wiki do PostgreSQL no tópico [Compile and Install from sour
 
 **02. Obtendo e compilando o código fonte.**
 
-Baixe o código fonte do postgres a partir do [site oficial](https://www.postgresql.org/ftp/source/). Irei baixar a versão **12.4**.
+Baixe o código fonte do postgres a partir do [site oficial](https://www.postgresql.org/ftp/source/). Irei baixar a versão **13.0**.
 ```bash
 cd /tmp
-wget https://ftp.postgresql.org/pub/source/v12.4/postgresql-12.4.tar.gz
+wget https://ftp.postgresql.org/pub/source/v13.0/postgresql-13.0.tar.gz
 ```
 
-Agora descompacte o arquivo ```postgresql-12.4.tar.gz``` enviando para o diretório ```/usr/src```.
+Agora descompacte o arquivo ```postgresql-13.0.tar.gz``` enviando para o diretório ```/usr/src```.
 ```bash
-tar zxvf postgresql-12.4.tar.gz -C /usr/src
+tar zxvf postgresql-13.0.tar.gz -C /usr/src
 ```
 
-Para compilar, acesse o diretório ```/usr/src/postgresql-12.4``` e execute os comandos de compilação.
+Para compilar, acesse o diretório ```/usr/src/postgresql-13.0``` e execute os comandos de compilação.
 
 O ```configure``` irá validar se todos os requisitos foram atendidos.
 ```bash
-bash configure --prefix=/usr/local/pgsql/12.4 --with-systemd --with-openssl
+bash configure --prefix=/usr/local/pgsql/13.0 --with-systemd --with-openssl
 ```
 
 O ```make``` irá de fato compilar o código fonte.
@@ -64,10 +64,10 @@ Existe mais de uma forma de adicionar os binários no PATH do sistema operaciona
 
 Crie o arquivo ```/etc/profile.d/postgres.sh``` e insira o conteúdo abaixo.
 ```
-PATH="$PATH:/usr/local/pgsql/12.4/bin"
+PATH="$PATH:/usr/local/pgsql/13.0/bin"
 export PATH
 
-MANPATH="/usr/local/pgsql/12.4/share/man"
+MANPATH="/usr/local/pgsql/13.0/share/man"
 export MANPATH
 ```
 
@@ -78,12 +78,12 @@ source /etc/profile.d/postgres.sh
 
 Se você consultar o valor da variável $PATH verá algo semelhante com o resultado abaixo.
 ```
-/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/local/pgsql/12.4/bin:/home/vagrant/.local/bin:/home/vagrant/bin
+/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/local/pgsql/13.0/bin:/home/vagrant/.local/bin:/home/vagrant/bin
 ```
 
 Para validar, execute ```psql --version```.
 ```
-psql (PostgreSQL) 12.4
+psql (PostgreSQL) 13.0
 ```
 > Nos casos onde você precisa ter mais de uma versão do PostgreSQL instalada, não recomendo executar esse passo, melhor executar os binários passando o PATH absoluto, porque dessa forma evita confusões relacionadas a versão.
 
@@ -98,13 +98,13 @@ useradd --user-group --no-create-home --shell /bin/bash postgres
 
 Nesse tópico consultei a documentação oficial do postgres, no tópico [18.1. The PostgreSQL User Account](https://www.postgresql.org/docs/12/postgres-user.html).
 
-**05. Inicializando o cluster de banco de dados.**
+**05. Criando o cluster de banco de dados.**
 
 No PostgreSQL o conceito de ```cluster``` define uma coleção de banco de dados gerenciado por uma única instância de um servidor.
 
-Seguindo uma boa prática, aqui irei inicializar o cluster numa partição secundária, provisionada exclusivamente para receber os dados do postgres.
+Seguindo uma boa prática, aqui irei criar o cluster numa partição secundária, provisionada exclusivamente para receber os dados do postgres.
 
-Outra boa prática a seguir é não inicializar o cluster diretamente no ponto de montagem, mas criar um subdiretório, ou seja, não inicializar o cluster diretamente no ```/data```, mas no ```/data/pgdata```.
+Outra boa prática a seguir é não criar o cluster diretamente no ponto de montagem, mas criar em um subdiretório, ou seja, não criar o cluster diretamente no ```/data```, mas no ```/data/pgdata```.
 
 Essa prática evita problemas com permissões e protege os dados contra possíveis falhas no ponto de montagem.
 
@@ -115,17 +115,17 @@ mkdir -p /data/pgdta
 
 Mude o dono do diretório para o usuário ```postgres```.
 ```bash
-chown postgres:postgres /data/pgdata
+chown postgres:postgres /data -R
 ```
 
 Ajuste a permissão para ```0700```.
 ```bash
-chmod 0700 /data/pgdata
+chmod 0700 /data -R
 ```
 
-Agora inicialize o cluster com o comando abaixo.
+Agora crie o cluster com o comando abaixo.
 ```bash
-su --command "/usr/local/pgsql/12.4/bin/initdb --encoding UTF-8 --locale pt_BR.UTF-8 --pgdata /data/pgdata" --shell /bin/bash postgres
+su --command "/usr/local/pgsql/13.0/bin/initdb --encoding UTF-8 --locale pt_BR.UTF-8 --pgdata /data/pgdata" --shell /bin/bash postgres
 ```
 
 O resultado será semelhante ao mostrado abaixo.
@@ -155,7 +155,7 @@ You can change this by editing pg_hba.conf or using the option -A, or
 
 Success. You can now start the database server using:
 
-    /usr/local/pgsql/12.4/bin/pg_ctl -D /data/pgdata -l logfile start
+    /usr/local/pgsql/13.0/bin/pg_ctl -D /data/pgdata -l logfile start
 ```
 
 Listando a estrutura de diretórios criada temos o seguinte:
@@ -187,3 +187,39 @@ drwx------. 2 postgres postgres    18 Sep 12 23:02 pg_xact
 ```
 
 Nesse tópico consultei a documentação oficial do postgres, no tópico [18.2. Creating a Database Cluster](https://www.postgresql.org/docs/12/creating-cluster.html).
+
+**06. Inicializando o cluster.**
+
+Em sistemas operacionais com [**systemd**](https://www.freedesktop.org/wiki/Software/systemd/), crie o arquivo ```/etc/systemd/system/postgresql.service``` com o conteúdo abaixo.
+
+```
+[Unit]
+Description=PostgreSQL Database Server
+Documentation=man:postgres(1)
+
+[Service]
+Type=notify
+User=postgres
+ExecStart=/usr/local/pgsql/13.0/bin/postgres -D /data/pgdata
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+KillSignal=SIGINT
+TimeoutSec=0
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Recarregue as configurações do systemd com o comando abaixo.
+```bash
+systemctl daemon-reload
+```
+
+Já pode inicializar o serviço executando o comando abaixo.
+```bash
+systemctl enable --now postgresql.service
+```
+
+Se tudo estiver devidamente configurado, o serviço do postgres será iniciado e pronto para uso.
+
+Nesse tópico consultei a documentação oficial do postgres, no tópico [18.3. Starting the Database Server](https://www.postgresql.org/docs/13/server-start.html).
